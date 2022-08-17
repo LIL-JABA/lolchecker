@@ -49,7 +49,7 @@ class Checker:
                 self.summoner_name = self.user_info["lol_account"]["summoner_name"]
                 self.valid+=1
                 with open (f'output\\valid.txt', 'a', encoding='UTF-8') as file:
-                    file.write(account)
+                    file.write(f'{account}\n')
 
                 #inventory=check.get_inventory(self.user_info,self.region_id,login,token)
                 #print(inventory)
