@@ -10,7 +10,7 @@ from re import compile
 from ssl import PROTOCOL_TLSv1_2
 from tkinter import *
 
-from requests import session as sesh
+import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import PoolManager
 import re
@@ -92,10 +92,19 @@ class auth:
 
         return token,entitlement,puuid,mailverif
 
-    def uinfo(self,token):
-        headers = {
-            'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
-            'Authorization': f'Bearer {token}'
-        }
-        userinfo=self.session.post(url=links.INFO_URL,headers=headers).json()
-        return userinfo
+    def get_region(self,token):
+        try:
+            HEADERS= {
+                        'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
+                        'Authorization': f'Bearer {token}'
+                    }
+            uinfo=self.session.post(url=links.INFO_URL,headers=HEADERS).json()
+            self.region_id = uinfo["region"]["id"].replace('1','').replace('2','').upper()
+            self.region_tag = uinfo["region"]["tag"]
+        except:
+            self.region_id=None
+        try:
+            self.level = uinfo["lol_account"]["summoner_level"]
+        except:
+            self.level='N/A'
+        return self.region_id,self.level

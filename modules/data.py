@@ -1,10 +1,6 @@
 import requests
 
 class links:
-    HEADERS= {
-            'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
-            'Authorization': 'Bearer {token}'
-        }
     AUTH_URL = "https://auth.riotgames.com/api/v1/authorization"
     INFO_URL = "https://auth.riotgames.com/userinfo"
     INVENTORY_URL = "https://{region_id}.cap.riotgames.com/lolinventoryservice/v2/inventories/simple?"

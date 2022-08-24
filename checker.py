@@ -15,6 +15,18 @@ class Checker:
         self.checked=0
         self.banned=0
         self.bad=[0,1,3,4]
+        self.regions={
+            "BR": 0,
+            "EUN": 0,
+            "EUW": 0,
+            "JP": 0,
+            "LA": 0,
+            "NA": 0,
+            "OC": 0,
+            "RU": 0,
+            "TR": 0,
+            'unknown':0
+        }
 
     def checker(self,accounts,count) -> None:
         self.count=count
@@ -30,6 +42,17 @@ class Checker:
     >                   valid                >[{Fore.GREEN}{self.valid}{Style.RESET_ALL}]<
     >                   banned               >[{Fore.LIGHTRED_EX}{self.banned}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    >                   BR                   >[{Fore.CYAN}{self.regions['BR']}{Style.RESET_ALL}]<
+    >                   EUN                  >[{Fore.CYAN}{self.regions['EUN']}{Style.RESET_ALL}]<
+    >                   EUW                  >[{Fore.CYAN}{self.regions['EUW']}{Style.RESET_ALL}]<
+    >                   JP                   >[{Fore.CYAN}{self.regions['JP']}{Style.RESET_ALL}]<
+    >                   LA                   >[{Fore.CYAN}{self.regions['LA']}{Style.RESET_ALL}]<
+    >                   NA                   >[{Fore.CYAN}{self.regions['NA']}{Style.RESET_ALL}]<
+    >                   OC                   >[{Fore.CYAN}{self.regions['OC']}{Style.RESET_ALL}]<
+    >                   RU                   >[{Fore.CYAN}{self.regions['RU']}{Style.RESET_ALL}]<
+    >                   TR                   >[{Fore.CYAN}{self.regions['TR']}{Style.RESET_ALL}]<
+    >                   UNKNOWN              >[{Fore.CYAN}{self.regions['unknown']}{Style.RESET_ALL}]<
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     >                   errors               >[{Fore.LIGHTRED_EX}{self.err}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             ''')
@@ -43,13 +66,20 @@ class Checker:
                         self.banned+=1
                     self.checked+=1
                     continue
-                self.user_info=ath.uinfo(token)
-                self.region_id = self.user_info["region"]["id"]
-                self.region_tag = self.user_info["region"]["tag"]
-                self.summoner_name = self.user_info["lol_account"]["summoner_name"]
+                region,level=ath.get_region(token)
+                try:
+                    self.regions[region]+=1
+                except:
+                    self.regions['unknown']+=1
+                    region='N/A'
+                #self.summoner_name = self.user_info["lol_account"]["summoner_name"]
                 self.valid+=1
                 with open (f'output\\valid.txt', 'a', encoding='UTF-8') as file:
-                    file.write(f'{account}\n')
+                    file.write(f'''
+|[{account}]
+|region: {region}
+|level: {level}
+###account###\n''')
 
                 #inventory=check.get_inventory(self.user_info,self.region_id,login,token)
                 #print(inventory)
@@ -70,6 +100,17 @@ class Checker:
     >                   checked              >[{Fore.YELLOW}{self.checked}/{count}{Style.RESET_ALL}]<
     >                   valid                >[{Fore.GREEN}{self.valid}{Style.RESET_ALL}]<
     >                   banned               >[{Fore.LIGHTRED_EX}{self.banned}{Style.RESET_ALL}]<
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    >                   BR                   >[{Fore.CYAN}{self.regions['BR']}{Style.RESET_ALL}]<
+    >                   EUN                  >[{Fore.CYAN}{self.regions['EUN']}{Style.RESET_ALL}]<
+    >                   EUW                  >[{Fore.CYAN}{self.regions['EUW']}{Style.RESET_ALL}]<
+    >                   JP                   >[{Fore.CYAN}{self.regions['JP']}{Style.RESET_ALL}]<
+    >                   LA                   >[{Fore.CYAN}{self.regions['LA']}{Style.RESET_ALL}]<
+    >                   NA                   >[{Fore.CYAN}{self.regions['NA']}{Style.RESET_ALL}]<
+    >                   OC                   >[{Fore.CYAN}{self.regions['OC']}{Style.RESET_ALL}]<
+    >                   RU                   >[{Fore.CYAN}{self.regions['RU']}{Style.RESET_ALL}]<
+    >                   TR                   >[{Fore.CYAN}{self.regions['TR']}{Style.RESET_ALL}]<
+    >                   UNKNOWN              >[{Fore.CYAN}{self.regions['unknown']}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     >                   errors               >[{Fore.LIGHTRED_EX}{self.err}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -18,9 +18,12 @@ class checkers:
             [f"{k}={v}" for k, v in query.items()]
             + [f"inventoryTypes={t}" for t in types]
         )
-
+        HEADERS= {
+                    'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
+                    'Authorization': f'Bearer {token}'
+                }
         response = session.get(
-            url=links.INVENTORY_URL.format(region_id=region_id) + query_string,headers=links.HEADERS.__format__(token)
+            url=links.INVENTORY_URL.format(region_id=region_id) + query_string,headers=HEADERS
         )
 
         try:
