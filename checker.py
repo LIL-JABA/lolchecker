@@ -66,19 +66,23 @@ class Checker:
                         self.banned+=1
                     self.checked+=1
                     continue
-                region,level=ath.get_region(token)
+                region,level,regionid=ath.get_region(token)
                 try:
                     self.regions[region]+=1
                 except:
                     self.regions['unknown']+=1
                     region='N/A'
-                #self.summoner_name = self.user_info["lol_account"]["summoner_name"]
+
+                if region != 'N/A':
+                    rp,be=check.balance(token,regionid)
+
                 self.valid+=1
                 with open (f'output\\valid.txt', 'a', encoding='UTF-8') as file:
                     file.write(f'''
 |[{account}]
 |region: {region}
 |level: {level}
+|rp, blue essence: {rp}, {be}
 ###account###\n''')
 
                 #inventory=check.get_inventory(self.user_info,self.region_id,login,token)

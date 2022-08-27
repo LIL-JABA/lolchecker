@@ -99,7 +99,8 @@ class auth:
                         'Authorization': f'Bearer {token}'
                     }
             uinfo=self.session.post(url=links.INFO_URL,headers=HEADERS).json()
-            self.region_id = uinfo["region"]["id"].replace('1','').replace('2','').upper()
+            self.region_id = uinfo["region"]["id"]
+            self.formatter_region=self.region_id.replace('1','').replace('2','').upper()
             self.region_tag = uinfo["region"]["tag"]
         except:
             self.region_id=None
@@ -107,4 +108,4 @@ class auth:
             self.level = uinfo["lol_account"]["summoner_level"]
         except:
             self.level='N/A'
-        return self.region_id,self.level
+        return self.formatter_region,self.level,self.region_id
