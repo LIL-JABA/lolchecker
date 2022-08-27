@@ -104,6 +104,7 @@ class auth:
             self.region_tag = uinfo["region"]["tag"]
         except:
             self.region_id=None
+            self.formatter_region='N/A'
         try:
             self.level = uinfo["lol_account"]["summoner_level"]
         except:
