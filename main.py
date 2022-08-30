@@ -8,7 +8,7 @@ from tkinter import filedialog
 import time
 import requests
 
-from modules import systems
+from codeparts import systems
 import checker
 
 sys=systems.system()

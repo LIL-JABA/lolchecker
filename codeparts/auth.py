@@ -1,5 +1,5 @@
 import requests
-from modules.data import links
+from codeparts.data import links
 from ssl import PROTOCOL_TLSv1_2
 from collections import OrderedDict
 from urllib3 import PoolManager
@@ -7,7 +7,6 @@ from requests.adapters import HTTPAdapter
 from collections import OrderedDict
 from msilib import type_binary
 from re import compile
-from ssl import PROTOCOL_TLSv1_2
 from tkinter import *
 
 import requests
@@ -110,3 +109,13 @@ class auth:
         except:
             self.level='N/A'
         return self.formatter_region,self.level,self.region_id
+
+    @staticmethod
+    def getuserinfo(self,token):
+        uinfosession=requests.session()
+        uinfosession.mount('https://', TLSAdapter())
+        HEADERS= {
+                    'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
+                    'Authorization': f'Bearer {token}'
+                }
+        return uinfosession.post(url=links.INFO_URL,headers=HEADERS).json()

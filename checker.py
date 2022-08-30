@@ -1,4 +1,4 @@
-from modules import auth,checkers,systems
+from codeparts import auth,checkers,systems
 import traceback
 import os
 import ctypes
@@ -74,7 +74,10 @@ class Checker:
                     region='N/A'
 
                 if region != 'N/A':
+                    inventory=check.get_inventory(token,puuid,regionid)
                     rp,be=check.balance(token,regionid)
+                else:
+                    rp,be='N/A','N/A'
 
                 self.valid+=1
                 with open (f'output\\valid.txt', 'a', encoding='UTF-8') as file:
