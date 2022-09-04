@@ -16,16 +16,11 @@ check=checker.Checker()
 
 class program():
     def __init__(self) -> None:
-        self.version='1.0.0'
-        self.lastver=self.version
         self.count=0
 
     def start(self):
         while True:
-            secret=''
-            if random.randint(0,50)==0:
-                secret='\n\ncapybaras ontop!\n\n'
-            ctypes.windll.kernel32.SetConsoleTitleW(f'LoLChecker {self.version} by liljaba1337')
+            ctypes.windll.kernel32.SetConsoleTitleW(f'LoLChecker by liljaba1337')
             os.system('cls')
             print(sys.center(f'''
 
@@ -36,9 +31,6 @@ class program():
 ███████╗╚█████╔╝███████╗╚█████╔╝██║░░██║███████╗╚█████╔╝██║░╚██╗███████╗██║░░██║
 ╚══════╝░╚════╝░╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
             '''))
-            print(sys.center(f'v{self.version}{secret}'))
-            if self.lastver!=self.version:
-                print(sys.center(f'update to the last version ({self.lastver}) on my GitHub'))
             print(sys.center('\nhttps://github.com/LIL-JABA/lolchecker\n'))
             print('  [1] - START CHECKER')
             print('  [2] - INFO/HELP')
@@ -76,9 +68,10 @@ class program():
                     lines = file.readlines()
                     ret=[]
                     for logpass in lines:
-                        self.count+=1
                         logpass=logpass.split(' - ')[0].replace('\n','').replace(' ','')
-                        ret.append(logpass)
+                        if logpass not in ret and ':' in logpass:
+                            ret.append(logpass)
+                        self.count+=1
                     print(f'\ndetected {self.count} accounts\n')
                     return ret
             except Exception as e:

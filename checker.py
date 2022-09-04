@@ -28,6 +28,19 @@ class Checker:
             'unknown':0
         }
 
+        self.ranks={
+            'unranked':0,
+            "iron":0,
+            "bronze":0,
+            "silver":0,
+            "gold":0,
+            "platinum":0,
+            "diamond":0,
+            "master":0,
+            "grandmaster":0,
+            "challenger":0
+        }
+
     def checker(self,accounts,count) -> None:
         self.count=count
         os.system(f'mode con: cols=60 lines=40')
@@ -53,6 +66,17 @@ class Checker:
     >                   TR                   >[{Fore.CYAN}{self.regions['TR']}{Style.RESET_ALL}]<
     >                   UNKNOWN              >[{Fore.CYAN}{self.regions['unknown']}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    >                   unranked             >[{Fore.CYAN}{self.ranks['unranked']}{Style.RESET_ALL}]<
+    >                   iron                 >[{Fore.CYAN}{self.ranks['iron']}{Style.RESET_ALL}]<
+    >                   bronze               >[{Fore.CYAN}{self.ranks['bronze']}{Style.RESET_ALL}]<
+    >                   silver               >[{Fore.CYAN}{self.ranks['silver']}{Style.RESET_ALL}]<
+    >                   gold                 >[{Fore.CYAN}{self.ranks['gold']}{Style.RESET_ALL}]<
+    >                   platinum             >[{Fore.CYAN}{self.ranks['platinum']}{Style.RESET_ALL}]<
+    >                   diamond              >[{Fore.CYAN}{self.ranks['diamond']}{Style.RESET_ALL}]<
+    >                   master               >[{Fore.CYAN}{self.ranks['master']}{Style.RESET_ALL}]<
+    >                   grandmaster          >[{Fore.CYAN}{self.ranks['grandmaster']}{Style.RESET_ALL}]<
+    >                   challenger           >[{Fore.CYAN}{self.ranks['challenger']}{Style.RESET_ALL}]<
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     >                   errors               >[{Fore.LIGHTRED_EX}{self.err}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             ''')
@@ -74,7 +98,13 @@ class Checker:
                     region='N/A'
 
                 if region != 'N/A':
-                    inventory=check.get_inventory(token,puuid,regionid)
+                    rank=check.getrank(regionid,token)
+                    input(rank)
+                    try:
+                        self.ranks[rank.lower()] +=1
+                    except:
+                        pass
+                    #inventory=check.get_inventory(token,puuid,regionid)
                     rp,be=check.balance(token,regionid)
                 else:
                     rp,be='N/A','N/A'
@@ -85,6 +115,7 @@ class Checker:
 |[{account}]
 |region: {region}
 |level: {level}
+|rank: {rank}
 |rp, blue essence: {rp}, {be}
 ###account###\n''')
 

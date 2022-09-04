@@ -118,3 +118,23 @@ class checkers:
         ]
 
         return result
+
+    def getrank(self,region,token):
+        try:
+            response = requests.get(
+                links.RANK_URL.format(
+                    region_id=region, summoner_name=auth.auth.getuserinfo(auth,token)["lol_account"]["summoner_name"]
+                )
+            ).json()
+            input(response)
+            rank = response["data"]["leagueProfile"]["latestRanks"]
+            self.account_id = response["data"]["leagueProfile"]["accountId"]
+            if rank:
+                for queue in rank:
+                    if queue["queue"] == "RANKED_SOLO_5X5":
+                        return f'{queue["tier"]}'
+            else:
+                rank='unranked'
+        except:
+            rank='unranked'
+        return rank
