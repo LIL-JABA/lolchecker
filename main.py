@@ -12,7 +12,6 @@ from codeparts import systems
 import checker
 
 sys=systems.system()
-check=checker.Checker()
 
 class program():
     def __init__(self) -> None:
@@ -33,18 +32,19 @@ class program():
             '''))
             print(sys.center('\nhttps://github.com/LIL-JABA/lolchecker\n'))
             print('  [1] - START CHECKER')
-            print('  [2] - INFO/HELP')
+            print('  [2] - EDIT SETTINGS')
+            print('  [3] - INFO/HELP')
             res=str(input('\n>>>'))
             if res=='1':
                 self.main()
                 break
             elif res=='2':
-                #edit settings
+                sys.edit_settings()
                 pass
             elif res=='3':
                 os.system('cls')
                 print(f'''
-    lolchecker v{self.version} by liljaba1337
+    lolchecker by liljaba1337
 
     discord: LIL JABA#1895
     server: https://discord.gg/r3Y5KhM7kP
@@ -99,6 +99,7 @@ class program():
         settings=sys.load_settings()
         fn=settings['default_file']
         accounts=self.get_accounts(fn)
+        check=checker.Checker(settings)
         check.checker(accounts,self.count)
     
 pr=program()
