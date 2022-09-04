@@ -99,7 +99,7 @@ class Checker:
 
                 if region != 'N/A':
                     rank=check.getrank(regionid,token)
-                    input(rank)
+                    #input(rank)
                     try:
                         self.ranks[rank.lower()] +=1
                     except:

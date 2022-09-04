@@ -77,8 +77,8 @@ class checkers:
 
 
     def get_inventory(self, token, sub,region_id,types=data.links.INVENTORY_TYPES):
-        print(region_id)
-        input()
+        #print(region_id)
+        #input()
         HEADERS= {
                     'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
                     'Authorization': f'Bearer {token}'
@@ -95,15 +95,15 @@ class checkers:
             [f"{k}={v}" for k, v in query.items()]
             + [f"inventoryTypes={t}" for t in types]
         )
-        print(query_string)
-        input()
+        #print(query_string)
+        #input()
 
         response = session.get(
             url=links.INVENTORY_URL.format(region_id=region_id) + query_string,
             headers=HEADERS
         )
-        print(response)
-        input()
+        #print(response)
+        #input()
 
         try:
             result = response.json()["data"]["items"]
@@ -126,7 +126,7 @@ class checkers:
                     region_id=region, summoner_name=auth.auth.getuserinfo(auth,token)["lol_account"]["summoner_name"]
                 )
             ).json()
-            input(response)
+            #input(response)
             rank = response["data"]["leagueProfile"]["latestRanks"]
             self.account_id = response["data"]["leagueProfile"]["accountId"]
             if rank:
