@@ -44,9 +44,9 @@ class auth:
             "username": login,
         }
 
-    def auth(self):
-        self.session.post(links.AUTH_URL,headers=self.useragent,json=self.authdata)
-        response=self.session.put(url=links.AUTH_URL,headers=self.useragent,json=self.login_data)
+    def auth(self,proxy):
+        self.session.post(links.AUTH_URL,headers=self.useragent,json=self.authdata,proxies=proxy)
+        response=self.session.put(url=links.AUTH_URL,headers=self.useragent,json=self.login_data,proxies=proxy)
         data=response.json()
         if "access_token" in response.text:
             pattern = compile(
@@ -59,14 +59,16 @@ class auth:
             return 1,1,1,1
         elif 'multifactor' in response.text:
             return 3,3,3,3
+        elif 'rate_limited' in response.text:
+            return 9,9,9,9
 
         headers = {
             'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
             'Authorization': f'Bearer {token}'
         }
-        r=self.session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={})
+        r=self.session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=proxy)
         entitlement = r.json()['entitlements_token']
-        r = self.session.post('https://auth.riotgames.com/userinfo', headers=headers, json={})
+        r = self.session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=proxy)
         data = r.json()
         puuid = data['sub']
         data2=data['ban']
@@ -91,13 +93,13 @@ class auth:
 
         return token,entitlement,puuid,mailverif
 
-    def get_region(self,token):
+    def get_region(self,token,proxy):
         try:
             HEADERS= {
                         'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
                         'Authorization': f'Bearer {token}'
                     }
-            uinfo=self.session.post(url=links.INFO_URL,headers=HEADERS).json()
+            uinfo=self.session.post(url=links.INFO_URL,headers=HEADERS,proxies=proxy).json()
             self.region_id = uinfo["region"]["id"]
             self.formatter_region=self.region_id.replace('1','').replace('2','').upper()
             self.region_tag = uinfo["region"]["tag"]

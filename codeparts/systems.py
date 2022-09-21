@@ -7,7 +7,10 @@ import tkinter
 
 class system():
     def __init__(self) -> None:
-        pass
+        path = os.getcwd()
+        self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
+        self.proxylist=[]
+        self.proxy = set()
 
     def center(self,var:str, space:int=None): # From Pycenter
         if not space:
@@ -58,3 +61,34 @@ class system():
             json.dump(data, f, indent=4)
             f.truncate()
             f.close()
+
+    def load_proxy(self):
+        with open(f"{self.parentpath}\\proxy.txt", "r") as f:
+            file_lines1 = f.readlines()
+            if len(file_lines1) == 0:
+                return
+            for line1 in file_lines1:
+                self.proxy.add(line1.strip())
+
+        for i in list(self.proxy):
+            if '.' in i:
+                self.proxylist.append({
+                    'http': i,
+                    'https':i,
+                })
+        return self.proxylist
+
+    def getproxy(self,proxlist):
+        try:
+            if proxlist == None:
+                return None
+            elif len(proxlist) <= 1:
+                return None
+            if self.num>len(proxlist)-1:
+                self.num=0
+            nextproxy=proxlist[self.num]
+            self.num+=1
+        except Exception as e:
+            #input(e)
+            nextproxy=None
+        return nextproxy

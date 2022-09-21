@@ -99,8 +99,8 @@ class program():
         settings=sys.load_settings()
         fn=settings['default_file']
         accounts=self.get_accounts(fn)
-        check=checker.Checker(settings)
-        check.checker(accounts,self.count)
+        check=checker.Checker(settings,accounts,self.count)
+        check.main()
     
 pr=program()
 if __name__=='__main__':
