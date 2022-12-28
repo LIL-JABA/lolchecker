@@ -63,6 +63,7 @@ class system():
             f.close()
 
     def load_proxy(self):
+        return []
         with open(f"{self.parentpath}\\proxy.txt", "r") as f:
             file_lines1 = f.readlines()
             if len(file_lines1) == 0:
@@ -79,6 +80,7 @@ class system():
         return self.proxylist
 
     def getproxy(self,proxlist):
+        return None
         try:
             if proxlist == None:
                 return None
